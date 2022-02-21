@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>0a79986e-c08c-44cd-8537-0f5bb3b69879</ProjectGuid>
+    <ProjectGuid>{0A79986E-C08C-44CD-8537-0F5BB3B69879}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Json</RootNamespace>
@@ -31,24 +31,35 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="FriendlyNameAttribute.cs" />
+    <Compile Include="helpers.cs" />
+    <Compile Include="JsonPackageAttribute.cs" />
+    <Compile Include="IJsonPackable.cs" />
+    <Compile Include="JsonPackager.cs" />
+    <Compile Include="JsonToken\NonValue\JsonArray.cs" />
+    <Compile Include="JsonToken\NonValue\JsonMapping.cs" />
+    <Compile Include="JsonToken\NonValue\JsonNonValue.cs" />
+    <Compile Include="JsonToken\Value\JsonString.cs" />
+    <Compile Include="JsonToken\Value\NonNumeric\JsonBool.cs" />
+    <Compile Include="JsonToken\Value\NonNumeric\JsonNonNumeric.cs" />
+    <Compile Include="JsonToken\Value\NonNumeric\JsonNull.cs" />
+    <Compile Include="JsonToken\Value\Numeric\JsonDecimal.cs" />
+    <Compile Include="JsonToken\Value\Numeric\JsonInt.cs" />
+    <Compile Include="JsonToken\Value\Numeric\JsonLong.cs" />
+    <Compile Include="JsonToken\Value\Numeric\JsonNumeric.cs" />
+    <Compile Include="JsonToken\JsonToken.cs" />
+    <Compile Include="JsonToken\Value\JsonValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>

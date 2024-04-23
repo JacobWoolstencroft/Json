@@ -107,6 +107,17 @@ namespace Json
             }
             return defaultValue;
         }
+        public long GetLong(string key, long defaultValue)
+        {
+            if (TryGetToken(key, out JsonToken token))
+            {
+                if (token.IsNull)
+                    return defaultValue;
+                if (token.TryGetLong(out long val))
+                    return val;
+            }
+            return defaultValue;
+        }
 
         public string GetString(string key, string defaultValue)
         {

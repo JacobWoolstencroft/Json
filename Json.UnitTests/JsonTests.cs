@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Json;
 
-namespace UnitTests
+namespace Json.UnitTests
 {
     [TestClass]
     public class JsonTests

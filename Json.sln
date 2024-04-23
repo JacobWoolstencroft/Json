@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.1525
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json", "Json\Json.csproj", "{0A79986E-C08C-44CD-8537-0F5BB3B69879}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{2AB3D1E9-579E-4DDA-9831-C55FB32942FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.UnitTests", "Json.UnitTests\Json.UnitTests.csproj", "{2AB3D1E9-579E-4DDA-9831-C55FB32942FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

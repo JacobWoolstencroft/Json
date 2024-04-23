@@ -8,14 +8,8 @@ using System.Reflection;
 namespace Json
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class JsonPackageAttribute : Attribute
+    public class JsonPackableAttribute : Attribute
     {
         public string Name;
-    }
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class JsonAttribute : Attribute
-    {
-        public string Name = null;
-        public bool Ignore = false;
     }
 }

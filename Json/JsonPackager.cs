@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,9 @@ namespace Json
             [FriendlyName("Parse error: missing value")] ParseErrorMissingValue,
             [FriendlyName("Parse error: unrecognized type \"$TypeName\"")] ParseErrorUnrecognizedType,
             [FriendlyName("Parse error: invalid object type, cannot cast $CastFrom to $CastTo")] ParseErrorInvalidCast,
-            [FriendlyName("Parse error: value is not a list")] ParseErrorNotAList
+            [FriendlyName("Parse error: value is not a list")] ParseErrorNotAList,
+
+            [FriendlyName("Encode error: Invalid type \"$TypeName\"")] EncodeErrorInvalidType
         }
         public class JsonPackagerException : Exception
         {
@@ -65,62 +68,42 @@ namespace Json
                 }
             }
         }
-        public JsonToken Package(IJsonPackable ob)
+
+        public JsonToken Package(object ob)
         {
             if (ob == null)
                 return new JsonNull();
-            JsonMapping map = new JsonMapping();
-            map["T"] = GetPackageName(ob.GetType());
-            map["V"] = ob.Pack();
-            return map;
-        }
-        public JsonToken Package<T>(List<T> list) where T : IJsonPackable
-        {
-            JsonMapping map = new JsonMapping();
-            JsonArray array;
-            if (typeof(T).IsAbstract)
+
+            if (ob is IJsonPackable packable)
             {
+                JsonMapping map = new JsonMapping();
+                map["T"] = GetPackageName(packable.GetType());
+                map["V"] = packable.Pack();
+                return map;
+            }
+            if (ob is IList list)
+            {
+                JsonMapping map = new JsonMapping();
+                JsonArray array = new JsonArray();
+
                 map["T"] = "List<>";
 
-                if (list == null)
-                    map["V"] = new JsonNull();
-                else
+                foreach (object val in list)
                 {
-                    array = new JsonArray();
-                    foreach (T ob in list)
-                    {
-                        array.Add(Package(ob));
-                    }
-                    map["V"] = array;
+                    array.Add(Package(val));
                 }
+                map["V"] = array;
                 return map;
             }
-            else
-            {
-                map["T"] = "List<" + GetPackageName(typeof(T)) + ">";
 
-                if (list == null)
-                    map["V"] = new JsonNull();
-                else
-                {
-                    array = new JsonArray();
-                    foreach (T ob in list)
-                    {
-                        if (ob == null)
-                            array.Add(new JsonNull());
-                        else
-                            array.Add(ob.Pack());
-                    }
-                    map["V"] = array;
-                }
-                return map;
-            }
+            throw new JsonPackagerException(JsonPackagerErrors.EncodeErrorInvalidType, ob.GetType().Name);
         }
-        public IJsonPackable Unpackage(string json)
+
+        public object Unpackage(string json)
         {
             return Unpackage(JsonToken.Parse(json));
         }
-        public IJsonPackable Unpackage(JsonToken token)
+        public object Unpackage(JsonToken token)
         {
             if (token == null || token.IsNull)
                 return null;
@@ -132,94 +115,77 @@ namespace Json
             if (val == null)
                 throw new JsonPackagerException(JsonPackagerErrors.ParseErrorMissingValue);
 
-            Type type = GetPackageType(PackageName);
-            if (type == null || !typeof(IJsonPackable).IsAssignableFrom(type))
-                throw new JsonPackagerException(JsonPackagerErrors.ParseErrorUnrecognizedType, PackageName);
-
-            IJsonPackable ob = (IJsonPackable)Activator.CreateInstance(type);
-            ob.Unpack(val);
-            return ob;
-        }
-        public T Unpackage<T>(string json) where T : class, IJsonPackable
-        {
-            return Unpackage<T>(JsonToken.Parse(json));
-        }
-        public T Unpackage<T>(JsonToken token) where T : class, IJsonPackable
-        {
-            IJsonPackable ob = Unpackage(token);
-            if (ob == null)
-                return null;
-            if (typeof(T).IsAssignableFrom(ob.GetType()))
-                return (T)ob;
-            throw new JsonPackagerException(JsonPackagerErrors.ParseErrorInvalidCast, ob.GetType(), typeof(T) );
-        }
-        public List<T> UnpackageList<T>(string json) where T : class, IJsonPackable
-        {
-            return UnpackageList<T>(JsonToken.Parse(json));
-        }
-        public List<T> UnpackageList<T>(JsonToken token) where T : class, IJsonPackable
-        {
-            if (token == null || token.IsNull)
-                return null;
-
-            string PackageName = token.GetString("T", null);
-            if (PackageName == null)
-                throw new JsonPackagerException(JsonPackagerErrors.ParseErrorMissingType);
-
-            JsonToken val = token.GetToken("V");
-            if (val == null)
-                throw new JsonPackagerException(JsonPackagerErrors.ParseErrorMissingValue);
-            if (val.IsNull)
-                return null;
-
-            if (val is JsonArray array)
+            if (PackageName == "List<>")
             {
-                if (PackageName == "List<>")
+                if (val is JsonArray array)
                 {
-                    List<T> list = new List<T>();
+                    List<object> list = new List<object>();
                     foreach (JsonToken t in array)
                     {
-                        IJsonPackable ob = Unpackage(t);
-                        if (ob == null)
-                            list.Add(null);
-                        else if (typeof(T).IsAssignableFrom(ob.GetType()))
-                            list.Add((T)ob);
-                        else
-                            throw new JsonPackagerException(JsonPackagerErrors.ParseErrorInvalidCast, ob.GetType(), typeof(T));
+                        object ob = Unpackage(t);
+                        list.Add(ob);
                     }
                     return list;
                 }
-                else if (PackageName.StartsWith("List<") && PackageName.EndsWith(">"))
-                {
-                    string ListTypeName = PackageName.SafeSubstring(5, PackageName.Length - 6);
-                    Type ListType = GetPackageType(ListTypeName);
-                    if (ListType == null)
-                        throw new JsonPackagerException(JsonPackagerErrors.ParseErrorUnrecognizedType, ListTypeName);
-                    if (typeof(T).IsAssignableFrom(ListType))
-                    {
-                        List<T> list = new List<T>();
-                        foreach (JsonToken t in array)
-                        {
-                            T ob = (T)Activator.CreateInstance(typeof(T));
-                            ob.Unpack(t);
-                            list.Add(ob);
-                        }
-                        return list;
-                    }
-                    else
-                        throw new JsonPackagerException(JsonPackagerErrors.ParseErrorInvalidCast, ListType, typeof(T));
-                }
                 else
-                    throw new JsonPackagerException(JsonPackagerErrors.ParseErrorNotAList);
+                    throw new Exception("Json Packager error: value is not an array");
             }
-            else
-                throw new Exception("Json Packager error: value is not an array");
+
+            {
+                Type type = GetPackageType(PackageName);
+                if (type == null || !typeof(IJsonPackable).IsAssignableFrom(type))
+                    throw new JsonPackagerException(JsonPackagerErrors.ParseErrorUnrecognizedType, PackageName);
+
+                IJsonPackable ob = (IJsonPackable)Activator.CreateInstance(type);
+                ob.Unpack(val);
+                return ob;
+            }
+        }
+        public T Unpackage<T>(string json) where T : class
+        {
+            return Unpackage<T>(JsonToken.Parse(json));
+        }
+        public T Unpackage<T>(JsonToken token) where T : class
+        {
+            object ob = Unpackage(token);
+            if (ob == null)
+                return null;
+
+            return (T)Cast(ob, typeof(T));
+        }
+        private object Cast(object ob, Type type)
+        {
+            if (ob == null)
+            {
+                if (type.IsClass)
+                    return null;
+                else
+                    throw new JsonPackagerException(JsonPackagerErrors.ParseErrorInvalidCast, null, type);
+            }
+
+            if (type.IsGenericType)
+            {
+                if (type.GetGenericTypeDefinition() == typeof(List<>) && ob is IList obList)
+                {
+                    Type elementType = type.GenericTypeArguments[0];
+                    IList list = (IList)Activator.CreateInstance(type);
+                    foreach (object val in obList)
+                    {
+                        list.Add(Cast(val, elementType));
+                    }
+                    return list;
+                }
+            }
+
+            if (type.IsAssignableFrom(ob.GetType()))
+                return ob;
+            throw new JsonPackagerException(JsonPackagerErrors.ParseErrorInvalidCast, ob.GetType(), type);
         }
 
         private Dictionary<string, Type> Packages = null; //package name to type
         public string GetPackageName(Type type)
         {
-            JsonPackageAttribute Package = GetCustomAttribute<JsonPackageAttribute>(type);
+            JsonPackableAttribute Package = GetCustomAttribute<JsonPackableAttribute>(type);
             if (Package != null && Package.Name != null)
                 return Package.Name;
             return type.Name;

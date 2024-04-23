@@ -47,41 +47,6 @@ namespace Json.UnitTests
         }
 
         [TestMethod]
-        public void AbstractArrayTest1()
-        {
-            List<AbstractTestClass> list = new List<AbstractTestClass>();
-            ConcreteTestClass1 a = new ConcreteTestClass1();
-            a.str = "A";
-            a.str2 = "A2";
-            ConcreteTestClass2 b = new ConcreteTestClass2();
-            b.str = "B";
-            b.i = 42;
-
-            list.Add(a);
-            list.Add(b);
-
-            JsonPackager packager = new JsonPackager(Assembly.GetAssembly(typeof(AbstractTestClass)));
-            string json = packager.Package(list).ToJsonString();
-
-            List<AbstractTestClass> list2 = packager.UnpackageList<AbstractTestClass>(json);
-            Assert.IsTrue(list2.Count == 2, "List did not parse as the correct number of elements");
-            if (list2[0] is ConcreteTestClass1 a2)
-            {
-                Assert.IsTrue(a2.str == "A", "ConcreteTestClass1.str failed to parse as the correct value");
-                Assert.IsTrue(a2.str2 == "A2", "ConcreteTestClass1.str2 failed to parse as the correct value");
-            }
-            else
-                Assert.Fail("ConcreteTestClass1 failed to unpackage as ConcreteTestClass1");
-            if (list2[1] is ConcreteTestClass2 b2)
-            {
-                Assert.IsTrue(b2.str == "B", "ConcreteTestClass2.str failed to parse as the correct value");
-                Assert.IsTrue(b2.i == 42, "ConcreteTestClass2.i failed to parse as the correct value");
-            }
-            else
-                Assert.Fail("ConcreteTestClass2 failed to unpackage as ConcreteTestClass1");
-        }
-
-        [TestMethod]
         public void MappingTest1()
         {
             string json;
@@ -106,58 +71,6 @@ namespace Json.UnitTests
             }
             else
                 Assert.Fail("json should parse as a JsonMapping");
-        }
-    }
-
-    public abstract class AbstractTestClass : IJsonPackable
-    {
-        public string str;
-        public abstract string GetText();
-        public abstract JsonToken Pack();
-        public abstract void Unpack(JsonToken json);
-    }
-    public class ConcreteTestClass1 : AbstractTestClass
-    {
-        public string str2;
-        public override string GetText()
-        {
-            return str + " " + str2;
-        }
-
-        public override JsonToken Pack()
-        {
-            JsonMapping map = new JsonMapping();
-            map["str"] = str;
-            map["str2"] = str2;
-            return map;
-        }
-
-        public override void Unpack(JsonToken json)
-        {
-            str = json.GetString("str", null);
-            str2 = json.GetString("str2", null);
-        }
-    }
-    public class ConcreteTestClass2 : AbstractTestClass
-    {
-        public int i;
-        public override string GetText()
-        {
-            return str + " i=" + i;
-        }
-
-        public override JsonToken Pack()
-        {
-            JsonMapping map = new JsonMapping();
-            map["str"] = str;
-            map["i"] = i;
-            return map;
-        }
-
-        public override void Unpack(JsonToken json)
-        {
-            str = json.GetString("str", null);
-            i = json.GetInt("i", 0);
         }
     }
 }

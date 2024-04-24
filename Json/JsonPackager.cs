@@ -74,6 +74,8 @@ namespace Json
             if (ob == null)
                 return new JsonNull();
 
+            Type type = ob.GetType();
+
             if (ob is IJsonPackable packable)
             {
                 JsonMapping map = new JsonMapping();
@@ -81,19 +83,42 @@ namespace Json
                 map["V"] = packable.Pack();
                 return map;
             }
-            if (ob is IList list)
+            if (type.IsGenericType)
             {
-                JsonMapping map = new JsonMapping();
-                JsonArray array = new JsonArray();
-
-                map["T"] = "List<>";
-
-                foreach (object val in list)
+                if (type.GetGenericTypeDefinition() == typeof(List<>) && ob is IList list)
                 {
-                    array.Add(Package(val));
+                    JsonMapping map = new JsonMapping();
+                    JsonArray array = new JsonArray();
+
+                    map["T"] = "List<>";
+
+                    foreach (object val in list)
+                    {
+                        array.Add(Package(val));
+                    }
+                    map["V"] = array;
+                    return map;
                 }
-                map["V"] = array;
-                return map;
+                if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>) && ob is IDictionary dict)
+                {
+                    Type dictType = ob.GetType();
+                    Type keyType = dictType.GenericTypeArguments[0];
+
+                    if (keyType != typeof(string))
+                        throw new JsonPackagerException(JsonPackagerErrors.EncodeErrorInvalidType, ob.GetType(), typeof(string));
+
+                    JsonMapping map = new JsonMapping();
+                    JsonMapping dictionary = new JsonMapping();
+
+                    map["T"] = "Dictionary<>";
+
+                    foreach (object key in dict.Keys)
+                    {
+                        dictionary[key.ToString()] = Package(dict[key]);
+                    }
+                    map["V"] = dictionary;
+                    return map;
+                }
             }
 
             throw new JsonPackagerException(JsonPackagerErrors.EncodeErrorInvalidType, ob.GetType().Name);
@@ -129,6 +154,21 @@ namespace Json
                 }
                 else
                     throw new Exception("Json Packager error: value is not an array");
+            }
+            if (PackageName == "Dictionary<>")
+            {
+                if (val is JsonMapping dictionary)
+                {
+                    Dictionary<string, object> dict = new Dictionary<string, object>();
+                    foreach (KeyValuePair<string, JsonToken> t in dictionary)
+                    {
+                        object ob = Unpackage(t.Value);
+                        dict.Add(t.Key, ob);
+                    }
+                    return dict;
+                }
+                else
+                    throw new Exception("Json Packager error: value is not a mapping");
             }
 
             {
@@ -174,6 +214,18 @@ namespace Json
                         list.Add(Cast(val, elementType));
                     }
                     return list;
+                }
+                if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>) && ob is IDictionary obDict)
+                {
+                    Type keyType = type.GenericTypeArguments[0];
+                    Type valType = type.GenericTypeArguments[1];
+                    IDictionary dict = (IDictionary)Activator.CreateInstance(type);
+                    foreach (object key in obDict.Keys)
+                    {
+                        object val = obDict[key];
+                        dict.Add(Cast(key, keyType), Cast(val, valType));
+                    }
+                    return dict;
                 }
             }
 

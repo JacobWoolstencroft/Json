@@ -127,5 +127,35 @@ namespace Json.UnitTests
                 }
             }
         }
+
+        [TestMethod]
+        public void AbstractDictionaryTest()
+        {
+            Dictionary<string, AbstractTestClass> dict = new Dictionary<string, AbstractTestClass>();
+            ConcreteTestClass1 a = new ConcreteTestClass1();
+            a.str = "A";
+            a.str2 = "A2";
+            ConcreteTestClass2 b = new ConcreteTestClass2();
+            b.str = "B";
+            b.i = 42;
+
+            dict.Add("Element 1", a);
+            dict.Add("Element 2", b);
+
+            JsonPackager packager = new JsonPackager(Assembly.GetAssembly(typeof(AbstractTestClass)));
+            string json = packager.Package(dict).ToJsonString();
+
+            Dictionary<string, AbstractTestClass> dict2 = packager.Unpackage<Dictionary<string, AbstractTestClass>>(json);
+            Assert.AreNotSame(dict, dict2, "dict2 is the same object");
+            Assert.IsTrue(dict.Count == dict2.Count, "Dictionary did not parse as the correct number of elements");
+            foreach (string key in dict.Keys)
+            {
+                AbstractTestClass o1 = dict[key];
+                AbstractTestClass o2;
+                if (!dict2.TryGetValue(key, out o2))
+                    Assert.Fail("dict2[\"" + key + "\"] does not exist");
+                o1.AssertMatch(o2, "dict2[\"" + key + "\"]");
+            }
+        }
     }
 }

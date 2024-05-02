@@ -52,9 +52,9 @@
     <Compile Include="JsonTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PackagerTests.cs" />
-    <Compile Include="TestClasses\AbstractTestClass.cs" />
-    <Compile Include="TestClasses\ConcreteTestClass1.cs" />
-    <Compile Include="TestClasses\ConcreteTestClass2.cs" />
+    <Compile Include="TestClasses\AbstractTestClass\AbstractTestClass.cs" />
+    <Compile Include="TestClasses\AbstractTestClass\ConcreteTestClass1.cs" />
+    <Compile Include="TestClasses\AbstractTestClass\ConcreteTestClass2.cs" />
     <Compile Include="TestClasses\NonJsonPackable\Animal.cs" />
     <Compile Include="TestClasses\NonJsonPackable\Cat.cs" />
     <Compile Include="TestClasses\NonJsonPackable\Dog.cs" />

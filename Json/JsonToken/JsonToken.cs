@@ -123,6 +123,12 @@ namespace Json
             }
             return defaultValue;
         }
+        public decimal GetDecimal(string key, decimal defaultValue)
+        {
+            if (TryGetDecimal(key, out decimal val))
+                return val;
+            return defaultValue;
+        }
 
         public string GetString(string key, string defaultValue)
         {
@@ -189,6 +195,27 @@ namespace Json
                         return val;
                 }
             }
+            return defaultValue;
+        }
+        #endregion
+
+        #region List getters
+        public int GetInt(int index, int defaultValue)
+        {
+            if (TryGetInt(index, out int val))
+                return val;
+            return defaultValue;
+        }
+        public long GetLong(int index, int defaultValue)
+        {
+            if (TryGetLong(index, out long val))
+                return val;
+            return defaultValue;
+        }
+        public decimal GetDecimal(int index, decimal defaultValue)
+        {
+            if (TryGetDecimal(index, out decimal val))
+                return val;
             return defaultValue;
         }
         #endregion

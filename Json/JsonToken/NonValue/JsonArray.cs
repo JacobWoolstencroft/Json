@@ -22,18 +22,33 @@ namespace Json
                 Children.Add(new JsonString(val));
         }
 
-        public override string ToJsonString()
+        protected internal override string ToJsonString(bool indent, int indentLevel)
         {
             bool first = true;
             StringBuilder r = new StringBuilder();
             r.Append('[');
-            foreach (JsonToken token in Children)
+            if (Children.Count > 0)
             {
-                if (first)
-                    first = false;
-                else
-                    r.Append(',');
-                r.Append(token.ToJsonString());
+                foreach (JsonToken token in Children)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        r.Append(',');
+
+                    if (indent)
+                    {
+                        r.AppendLine();
+                        r.Append('\t', indentLevel + 1);
+                    }
+                    r.Append(token.ToJsonString(indent, indentLevel + 1));
+                }
+                if (indent)
+                {
+                    r.AppendLine();
+                    if (indentLevel > 0)
+                        r.Append('\t', indentLevel);
+                }
             }
             r.Append(']');
             return r.ToString();

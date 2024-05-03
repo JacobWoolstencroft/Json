@@ -13,7 +13,7 @@
         }
 
         public override string Text => value.ToString();
-        public override string ToJsonString()
+        protected internal override string ToJsonString()
         {
             return value.ToString();
         }

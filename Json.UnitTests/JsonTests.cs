@@ -72,5 +72,42 @@ namespace Json.UnitTests
             else
                 Assert.Fail("json should parse as a JsonMapping");
         }
+
+        [TestMethod]
+        public void ToJsonStringTest()
+        {
+            string jsonIn, jsonOut, correctIndent, correctNonIndent;
+            JsonToken token;
+
+            jsonIn = "{ \"int1\"   :   1700 ,  \"str1\"   : null, \"str2\":\"null\" ,\"dec1\":0.000000735, \n"+
+                     "\"SubMap\"\t:{\"1\":1, \"emptyArray\":[],\n"+
+                     "\t\"array\":[2,3, 7 , \"MOO\"]}}";
+            correctIndent = "{\n"+
+                      "\t\"int1\":1700,\n"+
+                      "\t\"str1\":null,\n"+
+                      "\t\"str2\":\"null\",\n"+
+                      "\t\"dec1\":0.000000735,\n"+
+                      "\t\"SubMap\":{\n"+
+                      "\t\t\"1\":1,\n"+
+                      "\t\t\"emptyArray\":[],\n"+
+                      "\t\t\"array\":[\n"+
+                      "\t\t\t2,\n"+
+                      "\t\t\t3,\n"+
+                      "\t\t\t7,\n"+
+                      "\t\t\t\"MOO\"\n"+
+                      "\t\t]\n"+
+                      "\t}\n"+
+                      "}";
+            correctNonIndent = correctIndent.Replace("\n", "").Replace("\t", "");
+            correctIndent = correctIndent.Replace("\n", Environment.NewLine);
+
+            token = JsonToken.Parse(jsonIn);
+
+            jsonOut = token.ToJsonString(true);
+            Assert.AreEqual(correctIndent, jsonOut);
+
+            jsonOut = token.ToJsonString(false);
+            Assert.AreEqual(correctNonIndent, jsonOut);
+        }
     }
 }

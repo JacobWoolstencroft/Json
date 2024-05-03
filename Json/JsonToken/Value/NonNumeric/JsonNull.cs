@@ -4,7 +4,7 @@
     {
         public override string Text => null;
         public override bool IsNull => true;
-        public override string ToJsonString()
+        protected internal override string ToJsonString()
         {
             return "null";
         }

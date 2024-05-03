@@ -23,7 +23,7 @@ namespace Json
 
         public override string Text => str;
         public override bool IsNull => str == null;
-        public override string ToJsonString()
+        protected internal override string ToJsonString()
         {
             if (str == null)
                 return "null";

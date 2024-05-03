@@ -8,7 +8,12 @@ namespace Json
 {
     public abstract class JsonToken
     {
-        public abstract string ToJsonString();
+        public string ToJsonString(bool indent = false)
+        {
+            return ToJsonString(indent, 0);
+        }
+
+        protected internal abstract string ToJsonString(bool indent, int indentLevel);
 
         public static implicit operator JsonToken(int? value)
         {

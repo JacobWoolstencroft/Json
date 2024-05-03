@@ -14,7 +14,7 @@
 
         public override string Text => (value ? "true" : "false");
         public override bool IsNull => false;
-        public override string ToJsonString()
+        protected internal override string ToJsonString()
         {
             return (value ? "true" : "false");
         }

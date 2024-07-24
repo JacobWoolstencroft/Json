@@ -34,6 +34,19 @@
             val = value;
             return true;
         }
+        public override bool TryGetUInt(out uint val)
+        {
+            try
+            {
+                val = (uint)value;
+                return true;
+            }
+            catch
+            {
+                val = 0;
+                return false;
+            }
+        }
         public override bool TryGetLong(out long val)
         {
             val = value;

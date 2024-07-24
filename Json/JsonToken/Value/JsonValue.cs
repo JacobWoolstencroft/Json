@@ -31,6 +31,11 @@
             val = 0;
             return false;
         }
+        public override bool TryGetUInt(int index, out uint val)
+        {
+            val = 0;
+            return false;
+        }
         public override bool TryGetLong(int index, out long val)
         {
             val = 0;
@@ -69,6 +74,11 @@
             return false;
         }
         public override bool TryGetInt(string key, out int val)
+        {
+            val = 0;
+            return false;
+        }
+        public override bool TryGetUInt(string key, out uint val)
         {
             val = 0;
             return false;

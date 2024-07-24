@@ -45,6 +45,10 @@ namespace Json
         {
             return int.TryParse(str, out val);
         }
+        public override bool TryGetUInt(out uint val)
+        {
+            return uint.TryParse(str, out val);
+        }
         public override bool TryGetLong(out long val)
         {
             return long.TryParse(str, out val);

@@ -39,6 +39,16 @@
             val = (int)value;
             return true;
         }
+        public override bool TryGetUInt(out uint val)
+        {
+            if (decimal.Truncate(value) != value || value < uint.MinValue || value > uint.MaxValue)
+            {
+                val = 0;
+                return false;
+            }
+            val = (uint)value;
+            return true;
+        }
         public override bool TryGetLong(out long val)
         {
             if (decimal.Truncate(value) != value || value < long.MinValue || value > long.MaxValue)

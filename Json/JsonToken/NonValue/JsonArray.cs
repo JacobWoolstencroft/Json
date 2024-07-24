@@ -127,6 +127,13 @@ namespace Json
             val = 0;
             return false;
         }
+        public override bool TryGetUInt(int index, out uint val)
+        {
+            if (TryGetToken(index, out JsonToken token))
+                return token.TryGetUInt(out val);
+            val = 0;
+            return false;
+        }
         public override bool TryGetLong(int index, out long val)
         {
             if (TryGetToken(index, out JsonToken token))
@@ -173,6 +180,11 @@ namespace Json
             return false;
         }
         public override bool TryGetInt(string key, out int val)
+        {
+            val = 0;
+            return false;
+        }
+        public override bool TryGetUInt(string key, out uint val)
         {
             val = 0;
             return false;

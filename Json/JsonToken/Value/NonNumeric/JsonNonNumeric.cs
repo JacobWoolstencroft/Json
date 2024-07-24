@@ -7,6 +7,11 @@
             val = 0;
             return false;
         }
+        public override bool TryGetUInt(out uint val)
+        {
+            val = 0;
+            return false;
+        }
         public override bool TryGetLong(out long val)
         {
             val = 0;

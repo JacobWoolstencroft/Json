@@ -21,6 +21,15 @@ namespace Json
                 return new JsonNull();
             return new JsonInt(value.Value);
         }
+        public static implicit operator JsonToken(uint? value)
+        {
+            if (value == null)
+                return new JsonNull();
+            if (value <= int.MaxValue)
+                return new JsonInt((int)value);
+            else
+                return new JsonLong((long)value);
+        }
         public static implicit operator JsonToken(long? value)
         {
             if (value == null)
@@ -110,6 +119,12 @@ namespace Json
                 if (token.TryGetInt(out int val))
                     return val;
             }
+            return defaultValue;
+        }
+        public uint GetUInt(string key, uint defaultValue)
+        {
+            if (TryGetUInt(key, out uint val))
+                return val;
             return defaultValue;
         }
         public long GetLong(string key, long defaultValue)
@@ -206,7 +221,13 @@ namespace Json
                 return val;
             return defaultValue;
         }
-        public long GetLong(int index, int defaultValue)
+        public uint GetUInt(int index, uint defaultValue)
+        {
+            if (TryGetUInt(index, out uint val))
+                return val;
+            return defaultValue;
+        }
+        public long GetLong(int index, long defaultValue)
         {
             if (TryGetLong(index, out long val))
                 return val;
@@ -229,6 +250,7 @@ namespace Json
         }
 
         public abstract bool TryGetInt(out int val);
+        public abstract bool TryGetUInt(out uint val);
         public abstract bool TryGetLong(out long val);
         public abstract bool TryGetDecimal(out decimal val);
         public abstract bool TryGetString(out string val);
@@ -242,6 +264,7 @@ namespace Json
         public abstract bool TryGetMapping(string key, out JsonMapping val);
         public abstract bool TryGetArray(string key, out JsonArray val);
         public abstract bool TryGetInt(string key, out int val);
+        public abstract bool TryGetUInt(string key, out uint val);
         public abstract bool TryGetLong(string key, out long val);
         public abstract bool TryGetDecimal(string key, out decimal val);
         public abstract bool TryGetString(string key, out string val);
@@ -253,6 +276,7 @@ namespace Json
         public abstract bool TryGetMapping(int index, out JsonMapping val);
         public abstract bool TryGetArray(int index, out JsonArray val);
         public abstract bool TryGetInt(int index, out int val);
+        public abstract bool TryGetUInt(int index, out uint val);
         public abstract bool TryGetLong(int index, out long val);
         public abstract bool TryGetDecimal(int index, out decimal val);
         public abstract bool TryGetString(int index, out string val);

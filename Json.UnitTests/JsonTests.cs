@@ -14,11 +14,12 @@ namespace Json.UnitTests
             string json;
             JsonToken token;
             int i;
+            uint u;
             long l;
             decimal d;
             string s;
 
-            json = "[ 17e2, 3.5, -409348274847, 3482851, \"MOO\" \t,\"37.5\"]";
+            json = "[ 17e2, 3.5, -409348274847, 3482851, \"MOO\" \t,\"37.5\", 2147483648]";
             token = JsonToken.Parse(json);
 
             if (token is JsonArray array)
@@ -34,11 +35,14 @@ namespace Json.UnitTests
 
                 #region Value conversions
                 Assert.IsTrue(array[0].TryGetLong(out l) && l == 1700, "1700 should convert to long 1700");
-                Assert.IsFalse(array[1].TryGetInt(out i) || array[1].TryGetLong(out l), "3.5 should not convert to integer or long");
+                Assert.IsFalse(array[1].TryGetInt(out i) || array[1].TryGetUInt(out u) || array[1].TryGetLong(out l), "3.5 should not convert to int, uint, or long");
                 Assert.IsFalse(array[2].TryGetInt(out i), "-409348274847 should not convert to int (out of range)");
                 Assert.IsTrue(array[3].TryGetString(out s) && s == "3482851", "3482851 should convert to string \"3482851\"");
+                Assert.IsTrue(array[3].TryGetUInt(out u) && u == 3482851, "3482851 should convert to uint");
                 Assert.IsFalse(array[4].TryGetDecimal(out d), "\"MOO\" should not convert to decimal");
                 Assert.IsTrue(array[5].TryGetDecimal(out d) && d == 37.5M, "\"37.5\" should convert to decimal 37.5");
+                Assert.IsFalse(array[6].TryGetInt(out i), "2147483648 should not convert to int (out of range)");
+                Assert.IsTrue(array[6].TryGetUInt(out u) && u == 2147483648, "2147483648 should convert to uint");
                 #endregion
 
             }

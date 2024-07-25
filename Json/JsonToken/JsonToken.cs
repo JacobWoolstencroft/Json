@@ -239,16 +239,15 @@ namespace Json
                 return val;
             return defaultValue;
         }
-        #endregion
-
-        #region Value Indexers
         public string GetString(int index, string defaultValue)
         {
             if (TryGetString(index, out string val))
                 return val;
             return defaultValue;
         }
+        #endregion
 
+        #region Value Indexers
         public abstract bool TryGetInt(out int val);
         public abstract bool TryGetUInt(out uint val);
         public abstract bool TryGetLong(out long val);
@@ -257,6 +256,43 @@ namespace Json
         public abstract bool TryGetBool(out bool val);
 
         public abstract bool IsNull { get; }
+
+        public int GetInt(int defaultValue)
+        {
+            if (TryGetInt(out int val))
+                return val;
+            return defaultValue;
+        }
+        public uint GetUInt(uint defaultValue)
+        {
+            if (TryGetUInt(out uint val))
+                return val;
+            return defaultValue;
+        }
+        public long GetLong(long defaultValue)
+        {
+            if (TryGetLong(out long val))
+                return val;
+            return defaultValue;
+        }
+        public decimal GetDecimal(decimal defaultValue)
+        {
+            if (TryGetDecimal(out decimal val))
+                return val;
+            return defaultValue;
+        }
+        public string GetString(string defaultValue)
+        {
+            if (TryGetString(out string val))
+                return val;
+            return defaultValue;
+        }
+        public bool GetBool(bool defaultValue)
+        {
+            if (TryGetBool(out bool val))
+                return val;
+            return defaultValue;
+        }
         #endregion
 
         #region Mapping Indexers

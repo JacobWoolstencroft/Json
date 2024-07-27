@@ -15,11 +15,22 @@ namespace Json
 
         protected internal abstract string ToJsonString(bool indent, int indentLevel);
 
+        public static implicit operator JsonToken(int value)
+        {
+            return new JsonInt(value);
+        }
         public static implicit operator JsonToken(int? value)
         {
             if (value == null)
                 return new JsonNull();
             return new JsonInt(value.Value);
+        }
+        public static implicit operator JsonToken(uint value)
+        {
+            if (value <= int.MaxValue)
+                return new JsonInt((int)value);
+            else
+                return new JsonLong((long)value);
         }
         public static implicit operator JsonToken(uint? value)
         {
@@ -30,11 +41,19 @@ namespace Json
             else
                 return new JsonLong((long)value);
         }
+        public static implicit operator JsonToken(long value)
+        {
+            return new JsonLong(value);
+        }
         public static implicit operator JsonToken(long? value)
         {
             if (value == null)
                 return new JsonNull();
             return new JsonLong(value.Value);
+        }
+        public static implicit operator JsonToken(decimal value)
+        {
+            return new JsonDecimal(value);
         }
         public static implicit operator JsonToken(decimal? value)
         {

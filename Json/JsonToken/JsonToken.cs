@@ -647,9 +647,9 @@ namespace Json
                     case '\\':
                         r.Append("\\\\");
                         break;
-                    case '/':
-                        r.Append("\\/");
-                        break;
+                    //case '/':  //Escaping this character is optional
+                    //    r.Append("\\/");
+                    //    break;
                     case '\b':
                         r.Append("\\b");
                         break;

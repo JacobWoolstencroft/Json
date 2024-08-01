@@ -10,10 +10,12 @@ namespace Json
     {
         public string ToJsonString(bool indent = false)
         {
-            return ToJsonString(indent, 0);
+            StringBuilder builder = new StringBuilder();
+            BuildJsonString(builder, indent, 0);
+            return builder.ToString();
         }
 
-        protected internal abstract string ToJsonString(bool indent, int indentLevel);
+        protected internal abstract void BuildJsonString(StringBuilder builder, bool indent, int indentLevel);
 
         public static implicit operator JsonToken(int value)
         {
@@ -635,7 +637,12 @@ namespace Json
 
         public static string EncodeString(string str)
         {
-            StringBuilder r = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
+            EncodeString(builder, str);
+            return builder.ToString();
+        }
+        protected internal static void EncodeString(StringBuilder r, string str)
+        {
             r.Append('\"');
             foreach (char c in str)
             {
@@ -675,7 +682,6 @@ namespace Json
                 }
             }
             r.Append('\"');
-            return r.ToString();
         }
     }
 }

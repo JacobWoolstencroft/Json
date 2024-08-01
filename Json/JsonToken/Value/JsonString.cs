@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Json
 {
@@ -23,11 +24,12 @@ namespace Json
 
         public override string Text => str;
         public override bool IsNull => str == null;
-        protected internal override string ToJsonString()
+        protected internal override void BuildJsonString(StringBuilder builder, bool indent, int indentLevel)
         {
             if (str == null)
-                return "null";
-            return EncodeString(str);
+                builder.Append("null");
+            else
+                EncodeString(builder, str);
         }
         public string Value
         {

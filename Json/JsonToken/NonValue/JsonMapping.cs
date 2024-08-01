@@ -8,10 +8,9 @@ namespace Json
     {
         private Dictionary<string, JsonToken> Children = new Dictionary<string, JsonToken>();
 
-        protected internal override string ToJsonString(bool indent, int indentLevel)
+        protected internal override void BuildJsonString(StringBuilder r, bool indent, int indentLevel)
         {
             bool first = true;
-            StringBuilder r = new StringBuilder();
             r.Append('{');
             if (Children.Count > 0)
             {
@@ -27,9 +26,9 @@ namespace Json
                         r.AppendLine();
                         r.Append('\t', indentLevel + 1);
                     }
-                    r.Append(EncodeString(token.Key));
+                    EncodeString(r, token.Key);
                     r.Append(':');
-                    r.Append(token.Value.ToJsonString(indent, indentLevel + 1));
+                    token.Value.BuildJsonString(r, indent, indentLevel + 1);
                 }
                 if (indent)
                 {
@@ -39,7 +38,6 @@ namespace Json
                 }
             }
             r.Append('}');
-            return r.ToString();
         }
 
         public JsonToken this[string key]

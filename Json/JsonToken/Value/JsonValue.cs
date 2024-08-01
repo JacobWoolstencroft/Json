@@ -1,14 +1,10 @@
-﻿namespace Json
+﻿using System.Text;
+
+namespace Json
 {
     public abstract class JsonValue : JsonToken
     {
         public abstract string Text { get; }
-
-        protected internal override string ToJsonString(bool indent, int indentLevel)
-        {
-            return ToJsonString();
-        }
-        protected internal abstract string ToJsonString();
 
         #region Array indexers
         public override bool TryGetToken(int index, out JsonToken val)

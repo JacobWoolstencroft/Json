@@ -1,4 +1,6 @@
-﻿namespace Json
+﻿using System.Text;
+
+namespace Json
 {
     public class JsonBool : JsonNonNumeric
     {
@@ -14,9 +16,9 @@
 
         public override string Text => (value ? "true" : "false");
         public override bool IsNull => false;
-        protected internal override string ToJsonString()
+        protected internal override void BuildJsonString(StringBuilder builder, bool indent, int indentLevel)
         {
-            return (value ? "true" : "false");
+            builder.Append(value ? "true" : "false");
         }
         public bool Value
         {

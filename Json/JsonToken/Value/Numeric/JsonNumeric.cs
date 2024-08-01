@@ -5,7 +5,7 @@
         public override bool IsNull => false;
         public override bool TryGetString(out string val)
         {
-            val = ToJsonString();
+            val = Text;
             return true;
         }
         public override bool TryGetBool(out bool val)

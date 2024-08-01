@@ -1,4 +1,6 @@
-﻿namespace Json
+﻿using System.Text;
+
+namespace Json
 {
     public class JsonDecimal : JsonNumeric
     {
@@ -13,9 +15,9 @@
         }
 
         public override string Text => value.ToString();
-        protected internal override string ToJsonString()
+        protected internal override void BuildJsonString(StringBuilder builder, bool indent, int indentLevel)
         {
-            return value.ToString();
+            builder.Append(value.ToString());
         }
         public decimal Value
         {
